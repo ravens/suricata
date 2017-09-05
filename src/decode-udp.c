@@ -94,6 +94,7 @@ int DecodeUDP(ThreadVars *tv, DecodeThreadVars *dtv, Packet *p, uint8_t *pkt, ui
     if (UDP_GET_DST_PORT(p) == GTP_U_PORT &&
         unlikely(DecodeGTP(tv, dtv, p, p->payload,
                 p->payload_len, pq) == TM_ECODE_OK)) {
+        FlowSetupPacket(p);
         return TM_ECODE_OK;
     }
 #endif /* GTP_DECODER */

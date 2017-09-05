@@ -19,6 +19,7 @@
  * \file
  *
  * \author Jason Ish <jason.ish@emulex.com>
+ * \author Yan Grunenberger <yan@grunenberger.net>
  *
  * Decode GTP data packets.
  */
@@ -29,33 +30,6 @@
 #include "util-unittest.h"
 
 #include "decode-gtp.h"
-
-#define GTP_HDR_LEN 8
-#define GTP_OPT_HDR_LEN 4
-
-#define GTP_PROTO_IPV4 4
-#define GTP_PROTO_IPV6 6
-
-enum GtpMessageTypes {
-    GTP_TYPE_PDU = 255
-};
-
-typedef struct GtpHdr_ {
-    uint8_t version; /**< Version and flags. */
-    uint8_t type;
-    uint16_t length;
-    uint32_t teid;
-
-    uint16_t seq; /**< Optional sequence number. */
-    uint8_t npdu; /**< Optional N-PDU number. */
-    uint8_t nh; /**< Optional next extension header type. */
-} GtpHdr;
-
-#define GTP_VERSION(hdr) hdr->version >> 5
-#define GTP_PT(hdr) (hdr->version >> 4) & 0x1
-#define GTP_E(hdr) (hdr->version >> 2) & 0x1
-#define GTP_S(hdr) (hdr->version >> 1) & 0x1
-#define GTP_PN(hdr) hdr->version & 0x1
 
 /**
  * \brief Decode a GTP data packet.
@@ -110,13 +84,17 @@ static uint8_t *DecodeGTPDataPacket(uint8_t *pkt, int *data_len) {
 int DecodeGTP(ThreadVars *tv, DecodeThreadVars *dtv, Packet *p, uint8_t *pkt,
     uint16_t len, PacketQueue *pq) {
 
+    // keep track of the GTP header for flow events
+    p->gtph = (GtpHdr *)pkt;
+    p->gtp_teid = p->gtph->teid;
+
     int data_len = 0;
     uint8_t *data = DecodeGTPDataPacket(pkt, &data_len);
     if (data != NULL) {
         switch (data[0] >> 4) {
         case GTP_PROTO_IPV4: {
             Packet *tp = PacketTunnelPktSetup(tv, dtv, p, data,
-                data_len, IPPROTO_IP, pq);
+                data_len, DECODE_TUNNEL_IPV4, pq);
             if (tp != NULL) {
                 PKT_SET_SRC(tp, PKT_SRC_DECODER_GTP);
                 PacketEnqueue(pq, tp);
@@ -127,7 +105,7 @@ int DecodeGTP(ThreadVars *tv, DecodeThreadVars *dtv, Packet *p, uint8_t *pkt,
         }
         case GTP_PROTO_IPV6: {
             Packet *tp = PacketTunnelPktSetup(tv, dtv, p, data, data_len,
-                IPPROTO_IPV6, pq);
+                DECODE_TUNNEL_IPV6, pq);
             if (tp != NULL) {
                 PKT_SET_SRC(tp, PKT_SRC_DECODER_GTP);
                 PacketEnqueue(pq, tp);

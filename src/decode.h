@@ -426,6 +426,9 @@ typedef struct Packet_
     uint16_t vlan_id[2];
     uint8_t vlan_idx;
 
+    /* gtp TEID */
+    uint32_t gtp_teid;
+
     /* flow */
     uint8_t flowflags;
     /* coccinelle: Packet:flowflags:FLOW_PKT_ */
@@ -523,6 +526,8 @@ typedef struct Packet_
     GREHdr *greh;
 
     VLANHdr *vlanh[2];
+
+    GtpHdr *gtph;
 
     /* ptr to the payload of the packet
      * with it's length. */

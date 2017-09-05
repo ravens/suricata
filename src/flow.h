@@ -332,6 +332,9 @@ typedef struct Flow_
     uint8_t recursion_level;
     uint16_t vlan_id[2];
 
+     /* gtp */
+    uint32_t gtp_teid;
+
     /** flow hash - the flow hash before hash table size mod. */
     uint32_t flow_hash;
 
