@@ -425,6 +425,14 @@
         AC_DEFINE([PROFILE_LOCKING],[1],[Enable performance profiling for locks])
     ])
 
+  # gtp decoding support
+    AC_ARG_ENABLE(gtp-decoder,
+           AS_HELP_STRING([--enable-gtp-decoder], [Enable GTP-U decoder]),,[enable_gtp_decoder=no])
+    AS_IF([test "x$enable_gtp_decoder" = "xyes"], [
+         AC_DEFINE([GTP_DECODER],[1],[Enable GTP-U decoder])
+    ])
+ 
+
   # enable support for IPFW
     AC_ARG_ENABLE(ipfw,
             AS_HELP_STRING([--enable-ipfw], [Enable FreeBSD IPFW support for inline IDP]),,[enable_ipfw=no])
@@ -2183,6 +2191,7 @@ SURICATA_BUILD_CONF="Suricata Configuration:
   CUDA enabled:                            ${enable_cuda}
   Hyperscan support:                       ${enable_hyperscan}
   Libnet support:                          ${enable_libnet}
+  GTP-U decoding:                          ${enable_gtp_decoder}
 
   Rust support (experimental):             ${enable_rust}
   Experimental Rust parsers:               ${enable_rust_experimental}

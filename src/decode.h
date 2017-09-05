@@ -56,6 +56,7 @@ enum PktSrcEnum {
     PKT_SRC_DECODER_IPV4,
     PKT_SRC_DECODER_IPV6,
     PKT_SRC_DECODER_TEREDO,
+    PKT_SRC_DECODER_GTP,
     PKT_SRC_DEFRAG,
     PKT_SRC_STREAM_TCP_STREAM_END_PSEUDO,
     PKT_SRC_FFR,
@@ -89,6 +90,7 @@ enum PktSrcEnum {
 #include "decode-null.h"
 #include "decode-vlan.h"
 #include "decode-mpls.h"
+#include "decode-gtp.h"
 
 #include "detect-reference.h"
 
@@ -660,6 +662,7 @@ typedef struct DecodeThreadVars_
     uint16_t counter_mpls;
     uint16_t counter_ipv4inipv6;
     uint16_t counter_ipv6inipv6;
+    uint16_t counter_gtp_data;
     uint16_t counter_erspan;
 
     /** frag stats - defrag runs in the context of the decoder. */
@@ -949,6 +952,7 @@ int DecodeSCTP(ThreadVars *, DecodeThreadVars *, Packet *, uint8_t *, uint16_t, 
 int DecodeGRE(ThreadVars *, DecodeThreadVars *, Packet *, uint8_t *, uint16_t, PacketQueue *);
 int DecodeVLAN(ThreadVars *, DecodeThreadVars *, Packet *, uint8_t *, uint16_t, PacketQueue *);
 int DecodeMPLS(ThreadVars *, DecodeThreadVars *, Packet *, uint8_t *, uint16_t, PacketQueue *);
+int DecodeGTP(ThreadVars *, DecodeThreadVars *, Packet *, uint8_t *, uint16_t, PacketQueue *);
 int DecodeERSPAN(ThreadVars *, DecodeThreadVars *, Packet *, uint8_t *, uint16_t, PacketQueue *);
 int DecodeTEMPLATE(ThreadVars *, DecodeThreadVars *, Packet *, const uint8_t *, uint16_t, PacketQueue *);
 
