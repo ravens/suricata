@@ -93,25 +93,16 @@ int DecodeGTP(ThreadVars *tv, DecodeThreadVars *dtv, Packet *p, uint8_t *pkt,
     if (data != NULL) {
         switch (data[0] >> 4) {
         case GTP_PROTO_IPV4: {
-            Packet *tp = PacketTunnelPktSetup(tv, dtv, p, data,
-                data_len, DECODE_TUNNEL_IPV4, pq);
-            if (tp != NULL) {
-                PKT_SET_SRC(tp, PKT_SRC_DECODER_GTP);
-                PacketEnqueue(pq, tp);
-                StatsIncr(tv, dtv->counter_gtp_data);
-                return TM_ECODE_OK;
-            }
+            StatsIncr(tv, dtv->counter_gtp_data);
+            return DecodeIPV4(tv, dtv, p, data,
+                       data_len, pq);
+
             break;
         }
         case GTP_PROTO_IPV6: {
-            Packet *tp = PacketTunnelPktSetup(tv, dtv, p, data, data_len,
-                DECODE_TUNNEL_IPV6, pq);
-            if (tp != NULL) {
-                PKT_SET_SRC(tp, PKT_SRC_DECODER_GTP);
-                PacketEnqueue(pq, tp);
-                StatsIncr(tv, dtv->counter_gtp_data);
-                return TM_ECODE_OK;
-            }
+            StatsIncr(tv, dtv->counter_gtp_data);
+            return DecodeIPV6(tv, dtv, p, data,
+                       data_len, pq);
             break;
         }
         default:

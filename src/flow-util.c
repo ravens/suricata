@@ -134,6 +134,8 @@ void FlowInit(Flow *f, const Packet *p)
     f->vlan_id[0] = p->vlan_id[0];
     f->vlan_id[1] = p->vlan_id[1];
 
+    f->gtp_teid = p->gtp_teid;
+
     if (PKT_IS_IPV4(p)) {
         FLOW_SET_IPV4_SRC_ADDR_FROM_PACKET(p, &f->src);
         FLOW_SET_IPV4_DST_ADDR_FROM_PACKET(p, &f->dst);
