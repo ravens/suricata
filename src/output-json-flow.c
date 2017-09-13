@@ -118,10 +118,12 @@ static json_t *CreateJSONHeaderFromFlow(Flow *f, const char *event_type)
     if (event_type) {
         json_object_set_new(js, "event_type", json_string(event_type));
     }
+#ifdef GTP_DECODER
     /* gtp */
     if (f->gtp_teid) {
         json_object_set_new(js, "gtp_teid", json_integer(ntohl(f->gtp_teid)));
     }
+#endif /* GTP_DECODER */
 #if 0
     /* vlan */
     if (f->vlan_id[0] > 0) {

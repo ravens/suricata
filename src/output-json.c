@@ -447,10 +447,12 @@ json_t *CreateJSONHeader(const Packet *p, int direction_sensitive,
         }
     }
 
+#ifdef GTP_DECODER
     /* gtp */
     if (p->gtp_teid > 0) {
        json_object_set_new(js, "gtp_teid", json_integer(ntohl(p->gtp_teid)));
     }
+#endif /* GTP_DECODER */
 
     /* 5-tuple */
     JsonFiveTuple(p, direction_sensitive, js);

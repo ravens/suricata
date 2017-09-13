@@ -425,7 +425,9 @@ void DecodeRegisterPerfCounters(DecodeThreadVars *dtv, ThreadVars *tv)
     dtv->counter_teredo = StatsRegisterCounter("decoder.teredo", tv);
     dtv->counter_ipv4inipv6 = StatsRegisterCounter("decoder.ipv4_in_ipv6", tv);
     dtv->counter_ipv6inipv6 = StatsRegisterCounter("decoder.ipv6_in_ipv6", tv);
+#ifdef GTP_DECODER
     dtv->counter_gtp_data = StatsRegisterCounter("decoder.gtp_data",tv);
+#endif /* GTP_DECODER */
     dtv->counter_mpls = StatsRegisterCounter("decoder.mpls", tv);
     dtv->counter_avg_pkt_size = StatsRegisterAvgCounter("decoder.avg_pkt_size", tv);
     dtv->counter_max_pkt_size = StatsRegisterMaxCounter("decoder.max_pkt_size", tv);
@@ -573,9 +575,11 @@ const char *PktSrcToString(enum PktSrcEnum pkt_src)
         case PKT_SRC_DECODER_TEREDO:
             pkt_src_str = "teredo tunnel";
             break;
+#ifdef GTP_DECODER
         case PKT_SRC_DECODER_GTP:
             pkt_src_str = "gtp tunnel";
             break;
+#endif /* GTP_DECODER */
         case PKT_SRC_DEFRAG:
             pkt_src_str = "defrag";
             break;

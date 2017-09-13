@@ -426,8 +426,10 @@ typedef struct Packet_
     uint16_t vlan_id[2];
     uint8_t vlan_idx;
 
+#ifdef GTP_DECODER
     /* gtp TEID */
     uint32_t gtp_teid;
+#endif /* GTP_DECODER */
 
     /* flow */
     uint8_t flowflags;

@@ -134,7 +134,9 @@ void FlowInit(Flow *f, const Packet *p)
     f->vlan_id[0] = p->vlan_id[0];
     f->vlan_id[1] = p->vlan_id[1];
 
+#ifdef GTP_DECODER
     f->gtp_teid = p->gtp_teid;
+#endif /* GTP_DECODER */
 
     if (PKT_IS_IPV4(p)) {
         FLOW_SET_IPV4_SRC_ADDR_FROM_PACKET(p, &f->src);
