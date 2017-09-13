@@ -135,7 +135,10 @@ void FlowInit(Flow *f, const Packet *p)
     f->vlan_id[1] = p->vlan_id[1];
 
 #ifdef GTP_DECODER
-    f->gtp_teid[0] = p->gtp_teid;
+    if (p->gtp_teid>0)
+    {
+        f->gtp_teid[0] = p->gtp_teid;
+    }
 #endif /* GTP_DECODER */
 
     if (PKT_IS_IPV4(p)) {

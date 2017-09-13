@@ -84,23 +84,25 @@ static uint8_t *DecodeGTPDataPacket(uint8_t *pkt, int *data_len) {
 int DecodeGTP(ThreadVars *tv, DecodeThreadVars *dtv, Packet *p, uint8_t *pkt,
     uint16_t len, PacketQueue *pq) {
 
-    // keep track of the GTP header for flow events
-    p->gtph = (GtpHdr *)pkt;
-    p->gtp_teid = p->gtph->teid;
-
     int data_len = 0;
     uint8_t *data = DecodeGTPDataPacket(pkt, &data_len);
+
     if (data != NULL) {
+        
+        StatsIncr(tv, dtv->counter_gtp_data);
+
         switch (data[0] >> 4) {
         case GTP_PROTO_IPV4: {
-            StatsIncr(tv, dtv->counter_gtp_data);
+            p->gtph = (GtpHdr *)pkt;
+            p->gtp_teid = p->gtph->teid;
             return DecodeIPV4(tv, dtv, p, data,
                        data_len, pq);
 
             break;
         }
         case GTP_PROTO_IPV6: {
-            StatsIncr(tv, dtv->counter_gtp_data);
+            p->gtph = (GtpHdr *)pkt;
+            p->gtp_teid = p->gtph->teid;
             return DecodeIPV6(tv, dtv, p, data,
                        data_len, pq);
             break;

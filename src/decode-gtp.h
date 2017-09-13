@@ -27,7 +27,10 @@
 #define GTP_PROTO_IPV6 6
 
 enum GtpMessageTypes {
-    GTP_TYPE_PDU = 255
+    GTP_TYPE_PDU = 0xff,
+    GTP_TYPE_ECHO_REQUEST = 0x01,
+    GTP_TYPE_ECHO_REPLY = 0x02,
+    GTP_TYPE_ERROR_INDICATION = 0x1a
 };
 
 typedef struct GtpHdr_ {
@@ -39,7 +42,9 @@ typedef struct GtpHdr_ {
     uint16_t seq; /**< Optional sequence number. */
     uint8_t npdu; /**< Optional N-PDU number. */
     uint8_t nh; /**< Optional next extension header type. */
-} GtpHdr;
+} __attribute__((__packed__)) GtpHdr;
+
+
 
 #define GTP_VERSION(hdr) hdr->version >> 5
 #define GTP_PT(hdr) (hdr->version >> 4) & 0x1

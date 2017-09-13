@@ -86,6 +86,9 @@ typedef struct FlowHashKey4_ {
             uint16_t proto; /**< u16 so proto and recur add up to u32 */
             uint16_t recur; /**< u16 so proto and recur add up to u32 */
             uint16_t vlan_id[2];
+#ifdef GTP_DECODER
+            uint32_t gtp_teid[2];
+#endif /* GTP_DECODER */
         };
         const uint32_t u32[5];
     };
@@ -99,6 +102,9 @@ typedef struct FlowHashKey6_ {
             uint16_t proto; /**< u16 so proto and recur add up to u32 */
             uint16_t recur; /**< u16 so proto and recur add up to u32 */
             uint16_t vlan_id[2];
+#ifdef GTP_DECODER
+            uint32_t gtp_teid[2];
+#endif /* GTP_DECODER */
         };
         const uint32_t u32[11];
     };
@@ -138,6 +144,11 @@ static inline uint32_t FlowGetHash(const Packet *p)
             fhk.vlan_id[0] = p->vlan_id[0];
             fhk.vlan_id[1] = p->vlan_id[1];
 
+#ifdef GTP_DECODER
+            fhk.gtp_teid[0] = p->gtp_teid;
+            fhk.gtp_teid[1] = 0;
+#endif /* GTP_DECODER */
+
             hash = hashword(fhk.u32, 5, flow_config.hash_rand);
 
         } else if (ICMPV4_DEST_UNREACH_IS_VALID(p)) {
@@ -158,6 +169,12 @@ static inline uint32_t FlowGetHash(const Packet *p)
             fhk.vlan_id[0] = p->vlan_id[0];
             fhk.vlan_id[1] = p->vlan_id[1];
 
+#ifdef GTP_DECODER
+            fhk.gtp_teid[0] = p->gtp_teid;
+            fhk.gtp_teid[1] = 0;
+#endif /* GTP_DECODER */
+
+
             hash = hashword(fhk.u32, 5, flow_config.hash_rand);
 
         } else {
@@ -171,6 +188,11 @@ static inline uint32_t FlowGetHash(const Packet *p)
             fhk.recur = (uint16_t)p->recursion_level;
             fhk.vlan_id[0] = p->vlan_id[0];
             fhk.vlan_id[1] = p->vlan_id[1];
+
+#ifdef GTP_DECODER
+            fhk.gtp_teid[0] = p->gtp_teid;
+            fhk.gtp_teid[1] = 0;
+#endif /* GTP_DECODER */
 
             hash = hashword(fhk.u32, 5, flow_config.hash_rand);
         }
@@ -203,6 +225,11 @@ static inline uint32_t FlowGetHash(const Packet *p)
         fhk.recur = (uint16_t)p->recursion_level;
         fhk.vlan_id[0] = p->vlan_id[0];
         fhk.vlan_id[1] = p->vlan_id[1];
+
+#ifdef GTP_DECODER
+            fhk.gtp_teid[0] = p->gtp_teid;
+            fhk.gtp_teid[1] = 0;
+#endif /* GTP_DECODER */
 
         hash = hashword(fhk.u32, 11, flow_config.hash_rand);
     }
@@ -559,13 +586,6 @@ Flow *FlowGetFlowFromHash(ThreadVars *tv, DecodeThreadVars *dtv, const Packet *p
 
                 /* found our flow, lock & return */
                 FLOWLOCK_WRLOCK(f);
-#ifdef GTP_DECODER
-                /* update the GTP TEID if necessary */
-                if (f->gtp_teid[0] != p->gtp_teid )
-                {
-                    f->gtp_teid[1] = p->gtp_teid;
-                }
-#endif /* GTP_DECODER */
 
                 if (unlikely(TcpSessionPacketSsnReuse(p, f, f->protoctx) == 1)) {
                     f = TcpReuseReplace(tv, dtv, fb, f, hash, p);
