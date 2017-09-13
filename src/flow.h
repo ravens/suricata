@@ -334,7 +334,7 @@ typedef struct Flow_
 
 #ifdef GTP_DECODER
      /* gtp */
-    uint32_t gtp_teid;
+    uint32_t gtp_teid[2];
 #endif /* GTP_DECODER */
 
     /** flow hash - the flow hash before hash table size mod. */

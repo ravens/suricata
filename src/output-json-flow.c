@@ -120,8 +120,11 @@ static json_t *CreateJSONHeaderFromFlow(Flow *f, const char *event_type)
     }
 #ifdef GTP_DECODER
     /* gtp */
-    if (f->gtp_teid) {
-        json_object_set_new(js, "gtp_teid", json_integer(ntohl(f->gtp_teid)));
+    if (f->gtp_teid[0]>0) {
+        json_object_set_new(js, "gtp_teid", json_integer(ntohl(f->gtp_teid[0])));
+    }
+    if (f->gtp_teid[1]>0) {
+        json_object_set_new(js, "gtp_teid_reverse", json_integer(ntohl(f->gtp_teid[1])));
     }
 #endif /* GTP_DECODER */
 #if 0
