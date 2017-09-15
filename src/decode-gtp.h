@@ -21,7 +21,7 @@
 #define GTP_U_PORT 2152
 
 #define GTP_HDR_LEN 8
-#define GTP_OPT_HDR_LEN 4
+#define GTP_OPT_HDR_LEN 8
 
 #define GTP_PROTO_IPV4 4
 #define GTP_PROTO_IPV6 6
@@ -41,7 +41,7 @@ typedef struct GtpHdr_ {
 
     uint16_t seq; /**< Optional sequence number. */
     uint8_t npdu; /**< Optional N-PDU number. */
-    uint8_t nh; /**< Optional next extension header type. */
+    uint16_t nh; /**< Optional next extension header type. */
 } __attribute__((__packed__)) GtpHdr;
 
 

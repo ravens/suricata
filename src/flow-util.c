@@ -138,6 +138,9 @@ void FlowInit(Flow *f, const Packet *p)
     if (p->gtp_teid>0)
     {
         f->gtp_teid[0] = p->gtp_teid;
+#ifdef DEBUG
+        SCLogDebug("Detecting GTP packet, creating a GTP flow");
+#endif /* DEBUG */
     }
 #endif /* GTP_DECODER */
 

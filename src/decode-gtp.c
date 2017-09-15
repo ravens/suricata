@@ -58,6 +58,9 @@ static uint8_t *DecodeGTPDataPacket(uint8_t *pkt, int *data_len) {
         ntohs(hdr->length));
 
     if (hdr->type != GTP_TYPE_PDU) {
+#ifdef DEBUG
+        SCLogDebug("GTP packet is not PDU");
+#endif /* DEBUG */
         return NULL;
     }
 
@@ -68,6 +71,9 @@ static uint8_t *DecodeGTPDataPacket(uint8_t *pkt, int *data_len) {
     sflag = GTP_S(hdr);
     pnflag = GTP_PN(hdr);
     if (eflag || sflag || pnflag) {
+#ifdef DEBUG
+        SCLogDebug("GTP Extension header, sequence number or N-PDU flags detected, adjusting GTP header length");
+#endif /* DEBUG */
         hdr_len += GTP_OPT_HDR_LEN;
         *data_len -= GTP_OPT_HDR_LEN;
     }
@@ -93,6 +99,9 @@ int DecodeGTP(ThreadVars *tv, DecodeThreadVars *dtv, Packet *p, uint8_t *pkt,
 
         switch (data[0] >> 4) {
         case GTP_PROTO_IPV4: {
+#ifdef DEBUG
+            SCLogDebug("DecodeIPv4 called");
+#endif /* DEBUG */
             p->gtph = (GtpHdr *)pkt;
             p->gtp_teid = p->gtph->teid;
             return DecodeIPV4(tv, dtv, p, data,
@@ -101,6 +110,9 @@ int DecodeGTP(ThreadVars *tv, DecodeThreadVars *dtv, Packet *p, uint8_t *pkt,
             break;
         }
         case GTP_PROTO_IPV6: {
+#ifdef DEBUG
+            SCLogDebug("DecodeIPv6 called");
+#endif /* DEBUG */
             p->gtph = (GtpHdr *)pkt;
             p->gtp_teid = p->gtph->teid;
             return DecodeIPV6(tv, dtv, p, data,
@@ -108,6 +120,9 @@ int DecodeGTP(ThreadVars *tv, DecodeThreadVars *dtv, Packet *p, uint8_t *pkt,
             break;
         }
         default:
+#ifdef DEBUG
+            SCLogDebug("No packet decoder called");
+#endif /* DEBUG */
             break;
         }
     }
