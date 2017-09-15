@@ -135,13 +135,11 @@ void FlowInit(Flow *f, const Packet *p)
     f->vlan_id[1] = p->vlan_id[1];
 
 #ifdef GTP_DECODER
-    if (p->gtp_teid>0)
-    {
-        f->gtp_teid[0] = p->gtp_teid;
-#ifdef DEBUG
-        SCLogDebug("Detecting GTP packet, creating a GTP flow");
-#endif /* DEBUG */
-    }
+    #ifdef DEBUG
+        SCLogDebug("Packet has a GTP TEID associated, reporting it as flow initiator");
+    #endif /* DEBUG */
+    f->gtp_teid[0] = p->gtp_teid;
+
 #endif /* GTP_DECODER */
 
     if (PKT_IS_IPV4(p)) {
